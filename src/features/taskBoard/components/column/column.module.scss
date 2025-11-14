@@ -1,0 +1,22 @@
+@use '@shared/styles/colors' as *;
+
+.columnContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  width: 300px;
+
+  svg{
+    fill: currentColor;
+    width: 20px;
+  }
+}
+
+.columnBody{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  background-color: $color-primary-light;
+  padding: 10px;
+}
