@@ -1,1 +1,2 @@
-export {Column} from './column';
+export { Column } from './column';
+export { ControlPanel } from './controlPanel';

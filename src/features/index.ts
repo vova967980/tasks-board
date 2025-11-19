@@ -1,1 +1,1 @@
-export {TaskBoard} from './taskBoard';
+export { TaskBoard } from './taskBoard';

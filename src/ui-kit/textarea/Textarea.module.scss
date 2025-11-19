@@ -1,0 +1,17 @@
+@use '@shared-styles/colors' as *;
+@use '@shared-styles/fonts' as *;
+
+.textarea {
+  border: 1px solid $gray-500;
+  padding: 6px 12px;
+  outline: none;
+  font-size: $text-sm;
+  font-family: inherit;
+  line-height: inherit;
+  letter-spacing: normal;
+  resize: none;
+}
+
+.error {
+  border-color: $color-danger;
+}

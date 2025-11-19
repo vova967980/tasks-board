@@ -1,11 +1,8 @@
-import './App.css'
-import {TaskBoard} from "./features";
+import './App.css';
+import { TaskBoard } from './features';
 
 function App() {
-
-    return (
-        <TaskBoard/>
-    )
+  return <TaskBoard />;
 }
 
-export default App
+export default App;

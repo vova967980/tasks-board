@@ -1,0 +1,70 @@
+@use '@shared-styles/fonts' as *;
+@use '@shared-styles/colors' as *;
+
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  outline: none;
+  border: none;
+  background-color: transparent;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+/* VARIANTS */
+.variant_ghost {
+  color: $gray-500;
+  border: 1px solid transparent;
+
+  &:hover {
+    background-color: $gray-200;
+    color: $gray-700;
+  }
+}
+
+.variant_filled {
+  background-color: $gray-200;
+  color: $gray-600;
+  border: 1px solid $gray-300;
+
+  &:hover {
+    background-color: $gray-300;
+    color: $gray-700;
+  }
+}
+
+.variant_iconDanger {
+  color: $color-danger;
+
+  &:hover {
+    color: $color-danger-hover;
+  }
+}
+
+.variant_icon {
+  color: $gray-500;
+
+  &:hover {
+    color: $gray-700;
+  }
+}
+
+/* SIZES */
+.size_md {
+  font-size: $text-md;
+  padding: 8px 16px;
+}
+
+.size_sm {
+  font-size: $text-sm;
+  padding: 5px 10px;
+}

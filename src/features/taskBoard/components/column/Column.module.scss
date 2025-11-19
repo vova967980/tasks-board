@@ -1,0 +1,48 @@
+@use '@shared-styles/colors' as *;
+
+.columnContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  width: 350px;
+  min-width: 230px;
+
+  svg {
+    fill: currentColor;
+    width: 20px;
+  }
+}
+
+.columnHeader {
+  display: flex;
+  gap: 10px;
+}
+
+.labeledCheckbox {
+  padding: 0 10px;
+}
+
+.columnActionsWrapper {
+  margin-left: auto;
+  display: flex;
+}
+
+button.moveColumnButton {
+  &:hover {
+    cursor: grab;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.columnBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  background-color: $gray-200;
+  padding: 10px;
+}

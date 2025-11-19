@@ -26,9 +26,12 @@
 
     "baseUrl": "./src",
     "paths": {
-      "@shared": ["shared"],
+      "@shared-utils": ["shared/utils"],
+      "@shared-styles": ["shared/styles/*"],
+      "@shared-store": ["shared/store"],
+      "@shared-hooks": ["shared/hooks"],
       "@ui-kit": ["ui-kit"],
-      "@assets": ["assets"],
+      "@assets": ["assets"]
     }
   },
   "include": ["src"]

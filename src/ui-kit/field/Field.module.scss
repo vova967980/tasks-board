@@ -1,0 +1,13 @@
+@use '@shared-styles/colors' as *;
+@use '@shared-styles/fonts' as *;
+
+.fieldWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+
+  label {
+    font: $text-sm;
+    color: $gray-800;
+  }
+}

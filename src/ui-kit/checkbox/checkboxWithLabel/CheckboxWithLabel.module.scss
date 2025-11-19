@@ -1,0 +1,17 @@
+@use '@shared-styles/colors' as *;
+
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 5px;
+
+  &.disabled {
+    cursor: not-allowed;
+    color: $gray-500;
+  }
+}
+
+.label {
+  user-select: none;
+}

@@ -1,17 +1,20 @@
-import {defineConfig} from 'vite'
-import react from '@vitejs/plugin-react'
-import svgr from 'vite-plugin-svgr'
-import dts from "vite-plugin-dts";
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
+import dts from 'vite-plugin-dts';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [svgr(), dts(), react()],
-    resolve: {
-        alias: {
-            '@shared': path.resolve(__dirname, './src/shared'),
-            '@ui-kit': path.resolve(__dirname, './src/ui-kit'),
-            '@assets': path.resolve(__dirname, './src/assets'),
-        },
+  plugins: [svgr(), dts(), react()],
+  resolve: {
+    alias: {
+      '@shared-styles': path.resolve(__dirname, './src/shared/styles'),
+      '@shared-utils': path.resolve(__dirname, './src/shared/utils'),
+      '@shared-hooks': path.resolve(__dirname, './src/shared/hooks'),
+      '@shared-store': path.resolve(__dirname, './src/shared/store'),
+      '@ui-kit': path.resolve(__dirname, './src/ui-kit'),
+      '@assets': path.resolve(__dirname, './src/assets'),
     },
-})
+  },
+});

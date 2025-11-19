@@ -1,0 +1,31 @@
+.boardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  padding: 20px;
+}
+
+.columnsWrapper {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.addColumnVerticalButton {
+  display: flex;
+  margin-top: 50px;
+  width: max-content;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+
+  svg {
+    fill: currentColor;
+  }
+
+  &_fullWidth {
+    flex: 1;
+    writing-mode: horizontal-tb;
+  }
+}

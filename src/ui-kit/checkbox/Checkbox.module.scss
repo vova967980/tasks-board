@@ -1,0 +1,37 @@
+@use '@shared-styles/colors' as *;
+
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.input {
+  margin: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.input:hover + .icon {
+  color: $color-primary;
+}
+
+.input:disabled + .icon {
+  color: $gray-500;
+  cursor: not-allowed;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checked,
+.indeterminate {
+  color: $color-primary;
+}

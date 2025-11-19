@@ -1,17 +1,34 @@
-import type {FC, ReactNode} from "react";
-import styles from "./Button.module.scss";
+import type { ButtonHTMLAttributes, FC, ReactNode } from 'react';
+import styles from './Button.module.scss';
+import clsx from 'clsx';
 
+type Variant = 'ghost' | 'iconDanger' | 'icon' | 'filled';
+type Size = 'md' | 'sm';
 
-interface ButtonProps {
-    children?: ReactNode;
-    onClick?: () => void;
-    className?: string;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: ReactNode;
+  variant?: Variant;
+  size?: Size;
 }
 
-export const Button: FC<ButtonProps> = ({children, onClick}) => {
-    return (
-        <button onClick={onClick} className={styles.buttonContainer}>
-            {children}
-        </button>
-    );
+export const Button: FC<ButtonProps> = ({
+  children,
+  className,
+  variant = 'ghost',
+  size = 'md',
+  ...restProps
+}) => {
+  return (
+    <button
+      className={clsx(
+        styles.buttonContainer,
+        styles[`variant_${variant}`],
+        styles[`size_${size}`],
+        className,
+      )}
+      {...restProps}
+    >
+      {children}
+    </button>
+  );
 };

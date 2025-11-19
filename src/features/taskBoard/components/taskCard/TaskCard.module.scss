@@ -1,0 +1,96 @@
+@use '@shared-styles/colors' as *;
+@use '@shared-styles/fonts' as *;
+
+.cardWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: white;
+  padding: 12px;
+  min-height: 150px;
+  border-radius: 5px;
+  cursor: grab;
+  user-select: none;
+  box-shadow:
+    0 0 1px 0 rgba(9, 30, 66, 0.31),
+    0 2px 4px -1px rgba(9, 30, 66, 0.25);
+  border-left: 2px solid $color-primary;
+
+  &_done {
+    border-left: 2px solid $color-success;
+
+    .cardIdentifier,
+    .cardTitle,
+    .cardDescription {
+      text-decoration: line-through;
+    }
+  }
+
+  &_selected {
+    background-color: $color-primary-light;
+  }
+
+  &_editing {
+    border-left: 2px solid $color-warning;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.cardHeader,
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cardFooter {
+  margin-top: auto;
+}
+
+.cardIdentifier {
+  color: $gray-500;
+}
+
+.actionButtonsGroup {
+  display: flex;
+  gap: 6px;
+
+  button {
+    display: none;
+    padding: 0;
+
+    .cardWrapper:hover &,
+    .cardWrapper_editing & {
+      display: flex;
+    }
+  }
+}
+
+.cardTitle {
+  margin: 0;
+  font-weight: normal;
+}
+
+.cardDescription {
+  display: -webkit-box;
+  margin: 0;
+  font-size: $text-sm;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: $gray-500;
+}
+
+.cardStatus {
+  display: flex;
+}
+
+svg.doneIcon {
+  fill: $color-success;
+}
+
+svg.pendingIcon {
+  fill: $gray-500;
+}

@@ -1,1 +1,1 @@
-export {TaskBoard} from './TaskBoard.tsx';
+export { TaskBoard } from './TaskBoard.tsx';

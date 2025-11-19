@@ -1,0 +1,18 @@
+@use '@shared-styles/colors' as *;
+@use '@shared-styles/fonts' as *;
+
+.formHelperText {
+  font-size: $text-xs;
+}
+
+.type_error {
+  color: $color-danger;
+}
+
+.type_warning {
+  color: $color-warning;
+}
+
+.type_info {
+  color: $gray-500;
+}

@@ -1,1 +1,1 @@
-export {TaskBoard} from './containers';
+export { TaskBoard } from './containers';
