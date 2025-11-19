@@ -1,5 +1,5 @@
-@use '@shared-styles/colors' as *;
-@use '@shared-styles/fonts' as *;
+@use '@styles/colors' as *;
+@use '@styles/fonts' as *;
 
 .input {
   border: 1px solid $gray-500;

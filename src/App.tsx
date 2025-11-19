@@ -1,5 +1,5 @@
 import './App.css';
-import { TaskBoard } from './features';
+import { TaskBoard } from './modules';
 
 function App() {
   return <TaskBoard />;

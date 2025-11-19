@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [svgr(), dts(), react()],
   resolve: {
     alias: {
-      '@shared-styles': path.resolve(__dirname, './src/shared/styles'),
+      '@styles': path.resolve(__dirname, './src/styles'),
       '@shared-utils': path.resolve(__dirname, './src/shared/utils'),
       '@shared-hooks': path.resolve(__dirname, './src/shared/hooks'),
       '@shared-store': path.resolve(__dirname, './src/shared/store'),
