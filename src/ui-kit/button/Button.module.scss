@@ -10,6 +10,10 @@
   border: none;
   background-color: transparent;
 
+  svg{
+    fill: currentColor;
+  }
+
   &:hover {
     cursor: pointer;
   }
