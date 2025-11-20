@@ -12,7 +12,7 @@ export default defineConfig({
       '@styles': path.resolve(__dirname, './src/styles'),
       '@shared-utils': path.resolve(__dirname, './src/shared/utils'),
       '@shared-hooks': path.resolve(__dirname, './src/shared/hooks'),
-      '@shared-store': path.resolve(__dirname, './src/shared/store'),
+      '@store': path.resolve(__dirname, './src/store'),
       '@ui-kit': path.resolve(__dirname, './src/ui-kit'),
       '@assets': path.resolve(__dirname, './src/assets'),
     },

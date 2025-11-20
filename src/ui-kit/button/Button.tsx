@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, FC, ReactNode } from 'react';
+import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from 'react';
 import styles from './Button.module.scss';
 import clsx from 'clsx';
 
@@ -11,24 +11,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
 }
 
-export const Button: FC<ButtonProps> = ({
-  children,
-  className,
-  variant = 'ghost',
-  size = 'md',
-  ...restProps
-}) => {
-  return (
-    <button
-      className={clsx(
-        styles.buttonContainer,
-        styles[`variant_${variant}`],
-        styles[`size_${size}`],
-        className,
-      )}
-      {...restProps}
-    >
-      {children}
-    </button>
-  );
-};
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ children, className, variant = 'ghost', size = 'md', ...restProps }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={clsx(
+          styles.buttonContainer,
+          styles[`variant_${variant}`],
+          styles[`size_${size}`],
+          className,
+        )}
+        {...restProps}
+      >
+        {children}
+      </button>
+    );
+  },
+);

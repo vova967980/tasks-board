@@ -81,8 +81,3 @@ Requires Node.js 22+.
       main.tsx
 
 ------------------------------------------------------------------------
-
-## 📄 License
-
-This project was created as part of a technical test for RecMan. Not
-intended for public distribution.

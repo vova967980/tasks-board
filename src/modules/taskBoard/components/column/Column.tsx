@@ -1,62 +1,210 @@
 import styles from './column.module.scss';
 import { Button, CheckboxWithLabel } from '@ui-kit';
-import { isIndeterminate } from '@shared-utils';
 import { AddIcon, DeleteIcon, DragIndicatorIcon } from '@assets';
 import { TaskCard } from '../taskCard';
-import type { FC } from 'react';
-import type { TaskFormData, TaskType } from '../../types';
+import { type FC, useEffect, useRef, useState } from 'react';
+import type { TaskFormData } from '../../types';
+import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
+import {
+  addTask, moveColumn, moveTask,
+  removeColumn,
+  removeTask,
+  selectMany,
+  selectTask,
+  tasksFilteredByColumnSelector,
+  tasksSelectionByColumnSelector,
+  updateTask,
+} from '@store/taskBoard';
+import { TaskCardDraft } from '../taskCard/TaskCardDraft.tsx';
+import type { Task } from '@store/taskBoard/types.ts';
+import { FormProvider, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { taskFormSchema } from '../taskCard/taskFormSchema.ts';
+import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
 
 interface ColumnProps {
-  tasksDict: Record<string, TaskType>;
-  onRemoveTask: (taskId: string) => void;
-  onEditTask: (taskId: string, data: TaskFormData) => void;
-  toggleSelect: (taskId: string) => void;
-  toggleMarkDone: (taskId: string) => void;
+  columnId: number;
+  columnIndex: number;
 }
 
-export const Column: FC<ColumnProps> = ({
-  tasksDict,
-  onRemoveTask,
-  onEditTask,
-  toggleSelect,
-  toggleMarkDone,
-}) => {
-  const tasksList = Object.values(tasksDict);
-  const indeterminateSelectAll = isIndeterminate(tasksList, t => t.isSelected);
+export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
+  const [isDraftTask, setIsDraftTask] = useState<boolean>(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLButtonElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const dispatch = useAppDispatch();
+  const tasks = useAppSelector(tasksFilteredByColumnSelector(columnId));
+  const tasksOrder = useAppSelector(state => state.taskBoard.columns.entities[columnId].taskIds);
+  const selectAllState = useAppSelector(tasksSelectionByColumnSelector(columnId));
+  const tasksSelected = useAppSelector(state => state.taskBoard.preferences.selectedTaskIds);
+  const taskIds = tasks.map(t => t.id);
+
+  const methodsDraftTask = useForm<TaskFormData>({
+    defaultValues: { title: '', description: '' },
+    resolver: yupResolver(taskFormSchema),
+  });
+
+  const onSelectAll = (selected: boolean) => dispatch(selectMany({ ids: taskIds, selected }));
+  const onRemoveColumn = () => dispatch(removeColumn({ columnId }));
+  const onAddTask = (task: TaskFormData) => dispatch(addTask({ columnId, task }));
+  const onRemoveTask = (taskId: string) => dispatch(removeTask({ taskId }));
+  const onUpdateTask = (taskId: string, updates: Partial<Task>) =>
+    dispatch(updateTask({ taskId, updates }));
+  const onSelectTask = (taskId: string, selected: boolean) =>
+    dispatch(selectTask({ taskId, selected }));
+
+  useEffect(() => {
+    if (isDraftTask) {
+      methodsDraftTask.setFocus('title');
+    }
+  }, [isDraftTask, methodsDraftTask]);
+
+  useEffect(() => {
+    const element = ref.current;
+    const dragHandle = handleRef.current;
+    if (!element || !dragHandle) return;
+
+    return combine(
+      draggable({
+        element,
+        dragHandle,
+        getInitialData: () => ({
+          type: 'column',
+          columnId,
+          fromIndex: columnIndex,
+        }),
+      }),
+      dropTargetForElements({
+        element,
+        getData: () => ({
+          type: 'column',
+          columnId,
+          index: columnIndex,
+        }),
+        onDrop: ({ source, self }) => {
+          if (source.data.type !== 'column') return;
+
+          const fromIndex = source.data.fromIndex as number;
+          const toIndex = self.data.index as number;
+
+          if (fromIndex === toIndex) return;
+
+          dispatch(
+            moveColumn({
+              fromIndex,
+              toIndex,
+            }),
+          );
+        },
+      }),
+    );
+  }, [columnId, columnIndex, dispatch]);
+
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (!el) return;
+
+    return dropTargetForElements({
+      element: el,
+      getData: () => ({
+        type: 'column-body',
+        columnId,
+      }),
+      onDrop: ({ source, self }) => {
+        if (source.data.type !== 'task') return;
+
+        const taskId = source.data.taskId as string;
+        const fromColumnId = source.data.columnId as number;
+        const fromIndex = source.data.index as number;
+        const toColumnId = self.data.columnId as number;
+
+        if (fromColumnId === toColumnId) {
+          dispatch(
+            moveTask({
+              taskId,
+              sourceColumnId: fromColumnId,
+              destinationColumnId: toColumnId,
+              sourceIndex: fromIndex,
+              destinationIndex: tasksOrder.length,
+            }),
+          );
+        } else {
+          dispatch(
+            moveTask({
+              taskId,
+              sourceColumnId: fromColumnId,
+              destinationColumnId: toColumnId,
+              sourceIndex: fromIndex,
+              destinationIndex: tasksOrder.length,
+            }),
+          );
+        }
+      },
+    });
+  }, [columnId, dispatch, tasksOrder.length]);
+
+  const handleClickAddTask = () => {
+    setIsDraftTask(true);
+    methodsDraftTask.setFocus('title');
+  };
+  const handleRemoveDraft = () => {
+    setIsDraftTask(false);
+    methodsDraftTask.reset();
+  };
+  const handleCreateTask = (task: TaskFormData) => {
+    onAddTask(task);
+    handleRemoveDraft();
+    methodsDraftTask.reset();
+  };
+  const toggleTaskStatus = (task: Task) => {
+    onUpdateTask(task.id, { status: task.status === 'done' ? 'todo' : 'done' });
+  };
 
   return (
-    <div className={styles.columnContainer}>
+    <div ref={ref} className={styles.columnContainer}>
       <div className={styles.columnHeader}>
         <CheckboxWithLabel
           className={styles.labeledCheckbox}
-          onChange={() => console.log('Select All')}
-          checked={false}
-          disabled={!tasksList.length}
-          indeterminate={indeterminateSelectAll}
+          onChange={onSelectAll}
+          checked={selectAllState.all}
+          disabled={!tasks.length}
+          indeterminate={selectAllState.indeterminate}
         >
           Select All
         </CheckboxWithLabel>
         <div className={styles.columnActionsWrapper}>
-          <Button size="sm" variant="icon" className={styles.moveColumnButton}>
+          <Button ref={handleRef} size="sm" variant="icon" className={styles.moveColumnButton}>
             <DragIndicatorIcon />
           </Button>
-          <Button size="sm" variant="iconDanger">
+          <Button size="sm" variant="iconDanger" onClick={onRemoveColumn}>
             <DeleteIcon />
           </Button>
         </div>
       </div>
-      <div className={styles.columnBody}>
-        <Button>
+      <div ref={bodyRef} className={styles.columnBody}>
+        <Button onClick={handleClickAddTask}>
           <AddIcon /> Add Task
         </Button>
-        {tasksList.map(task => (
+        {isDraftTask && (
+          <FormProvider {...methodsDraftTask}>
+            <TaskCardDraft
+              onSave={methodsDraftTask.handleSubmit(handleCreateTask)}
+              onRemove={handleRemoveDraft}
+            />
+          </FormProvider>
+        )}
+        {tasks.map((task) => (
           <TaskCard
             key={task.id}
+            index={tasksOrder.indexOf(task.id)}
             {...task}
+            columnId={columnId}
+            isSelected={tasksSelected.has(task.id)}
             onRemove={() => onRemoveTask(task.id)}
-            toggleSelect={() => toggleSelect(task.id)}
-            toggleMarkDone={() => toggleMarkDone(task.id)}
-            onEdit={data => onEditTask(task.id, data)}
+            toggleSelect={() => onSelectTask(task.id, !tasksSelected.has(task.id))}
+            toggleMarkDone={() => toggleTaskStatus(task)}
+            onEdit={data => onUpdateTask(task.id, data)}
           />
         ))}
       </div>
