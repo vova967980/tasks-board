@@ -41,3 +41,13 @@ button.moveColumnButton {
   background-color: $gray-200;
   padding: 10px;
 }
+
+.dropZone {
+  display: flex;
+  flex: 1;
+
+  &_dragging{
+    border: 1px dashed $color-primary;
+    background: $color-primary-light;
+  }
+}

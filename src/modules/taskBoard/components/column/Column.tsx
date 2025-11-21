@@ -6,7 +6,9 @@ import { type FC, useEffect, useRef, useState } from 'react';
 import type { TaskFormData } from '../../types';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 import {
-  addTask, moveColumn, moveTask,
+  addTask,
+  moveColumn,
+  moveTask,
   removeColumn,
   removeTask,
   selectMany,
@@ -20,8 +22,13 @@ import type { Task } from '@store/taskBoard/types.ts';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { taskFormSchema } from '../taskCard/taskFormSchema.ts';
-import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import {
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import clsx from 'clsx';
 
 interface ColumnProps {
   columnId: number;
@@ -30,9 +37,10 @@ interface ColumnProps {
 
 export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
   const [isDraftTask, setIsDraftTask] = useState<boolean>(false);
+  const [isDraggingTask, setIsDraggingTask] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLButtonElement>(null);
-  const bodyRef = useRef<HTMLDivElement>(null);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(tasksFilteredByColumnSelector(columnId));
   const tasksOrder = useAppSelector(state => state.taskBoard.columns.entities[columnId].taskIds);
@@ -102,17 +110,13 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
   }, [columnId, columnIndex, dispatch]);
 
   useEffect(() => {
-    const el = bodyRef.current;
+    const el = dropZoneRef.current;
     if (!el) return;
-
-    if (tasksOrder.length > 0) {
-      return;
-    }
 
     return dropTargetForElements({
       element: el,
       getData: () => ({
-        type: 'column-body',
+        type: 'column-drop',
         columnId,
       }),
       onDrop: ({ source, self }) => {
@@ -129,13 +133,25 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
             sourceColumnId: fromColumnId,
             destinationColumnId: toColumnId,
             sourceIndex: fromIndex,
-            destinationIndex: 0,
+            destinationIndex: tasksOrder.length,
           }),
         );
       },
     });
   }, [columnId, dispatch, tasksOrder.length]);
 
+  useEffect(() => {
+    return monitorForElements({
+      onDragStart: ({ source }) => {
+        if (source.data.type === 'task') {
+          setIsDraggingTask(true);
+        }
+      },
+      onDrop: () => {
+        setIsDraggingTask(false);
+      },
+    });
+  }, []);
 
   const handleClickAddTask = () => {
     setIsDraftTask(true);
@@ -175,7 +191,7 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
           </Button>
         </div>
       </div>
-      <div ref={bodyRef} className={styles.columnBody}>
+      <div className={styles.columnBody}>
         <Button onClick={handleClickAddTask}>
           <AddIcon /> Add Task
         </Button>
@@ -187,7 +203,7 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
             />
           </FormProvider>
         )}
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <TaskCard
             key={task.id}
             index={tasksOrder.indexOf(task.id)}
@@ -200,6 +216,10 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
             onEdit={data => onUpdateTask(task.id, data)}
           />
         ))}
+        <div
+          ref={dropZoneRef}
+          className={clsx(styles.dropZone, isDraggingTask && styles.dropZone_dragging)}
+        />
       </div>
     </div>
   );
