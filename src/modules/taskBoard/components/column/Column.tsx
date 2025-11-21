@@ -105,6 +105,10 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
     const el = bodyRef.current;
     if (!el) return;
 
+    if (tasksOrder.length > 0) {
+      return;
+    }
+
     return dropTargetForElements({
       element: el,
       getData: () => ({
@@ -119,30 +123,19 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
         const fromIndex = source.data.index as number;
         const toColumnId = self.data.columnId as number;
 
-        if (fromColumnId === toColumnId) {
-          dispatch(
-            moveTask({
-              taskId,
-              sourceColumnId: fromColumnId,
-              destinationColumnId: toColumnId,
-              sourceIndex: fromIndex,
-              destinationIndex: tasksOrder.length,
-            }),
-          );
-        } else {
-          dispatch(
-            moveTask({
-              taskId,
-              sourceColumnId: fromColumnId,
-              destinationColumnId: toColumnId,
-              sourceIndex: fromIndex,
-              destinationIndex: tasksOrder.length,
-            }),
-          );
-        }
+        dispatch(
+          moveTask({
+            taskId,
+            sourceColumnId: fromColumnId,
+            destinationColumnId: toColumnId,
+            sourceIndex: fromIndex,
+            destinationIndex: 0,
+          }),
+        );
       },
     });
   }, [columnId, dispatch, tasksOrder.length]);
+
 
   const handleClickAddTask = () => {
     setIsDraftTask(true);

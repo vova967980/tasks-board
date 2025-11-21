@@ -139,7 +139,6 @@ const taskBoardSlice = createSlice({
         taskId,
         sourceColumnId,
         destinationColumnId,
-        sourceIndex,
         destinationIndex,
       } = action.payload;
 
@@ -155,15 +154,12 @@ const taskBoardSlice = createSlice({
 
       let insertIndex = destinationIndex;
 
-      if (sourceColumnId === destinationColumnId && realSourceIndex < destinationIndex) {
-        insertIndex = destinationIndex - 1;
-      }
-
       if (insertIndex < 0) insertIndex = 0;
       if (insertIndex > destList.length) insertIndex = destList.length;
 
       destList.splice(insertIndex, 0, taskId);
     }
+
 
   },
 });

@@ -118,7 +118,7 @@ export const TaskCard: FC<TaskCardProps> = ({
       dropTargetForElements({
         element: el,
         getData: () => ({
-          type: 'task-target',
+          type: 'task',
           taskId: id,
           columnId,
           index,
