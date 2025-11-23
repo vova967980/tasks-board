@@ -1,12 +1,4 @@
-import {
-  useState,
-  type ComponentProps,
-  type FC,
-  type ReactNode,
-  Fragment,
-  useEffect,
-  useRef,
-} from 'react';
+import { useState, type ComponentProps, type FC, type ReactNode, Fragment } from 'react';
 import styles from './taskCard.module.scss';
 import { Button, Checkbox } from '@ui-kit';
 import {
@@ -23,14 +15,8 @@ import clsx from 'clsx';
 import { TaskForm } from './taskForm';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { taskFormSchema } from './taskFormSchema.ts';
-import {
-  draggable,
-  dropTargetForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import { moveTask } from '@store/taskBoard';
-import { useAppDispatch } from '@store/hooks.ts';
+import { taskFormSchema } from '../../utils';
+import { useDragDropTask } from '../../hooks';
 
 interface TaskCardProps {
   id: string;
@@ -76,13 +62,13 @@ export const TaskCard: FC<TaskCardProps> = ({
   toggleSelect,
 }) => {
   const [isEditing, setIsEditing] = useState(!id);
-  const ref = useRef<HTMLDivElement>(null);
   const isDone = status === 'done';
-  const dispatch = useAppDispatch();
   const completeButton: Record<TaskStatus, ReactNode> = {
     todo: renderIconButton(<CheckAltIcon />, toggleMarkDone, 'Mark as complete'),
     done: renderIconButton(<CloseIcon />, toggleMarkDone, 'Mark as incomplete'),
   };
+
+  const { ref } = useDragDropTask({ id, index, columnId });
 
   const methods = useForm<TaskFormData>({
     defaultValues: { title, description },
@@ -95,65 +81,10 @@ export const TaskCard: FC<TaskCardProps> = ({
     setIsEditing(false);
   });
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    return combine(
-      draggable({
-        element: el,
-        getInitialData: () => ({
-          type: 'task',
-          taskId: id,
-          columnId,
-          index,
-        }),
-        onDragStart: () => {
-          el.classList.add(styles.cardWrapper_dragging);
-        },
-        onDrop: () => {
-          el.classList.remove(styles.cardWrapper_dragging);
-        },
-      }),
-      dropTargetForElements({
-        element: el,
-        getData: () => ({
-          type: 'task',
-          taskId: id,
-          columnId,
-          index,
-        }),
-        onDrop: ({ source, self }) => {
-          if (source.data.type !== 'task') return;
-
-          const fromTaskId = source.data.taskId as string;
-          const fromColumnId = source.data.columnId as number;
-          const fromIndex = source.data.index as number;
-
-          const toColumnId = self.data.columnId as number;
-          const toIndex = self.data.index as number;
-
-          if (fromTaskId === self.data.taskId && fromColumnId === toColumnId) {
-            return;
-          }
-
-          dispatch(
-            moveTask({
-              taskId: fromTaskId,
-              sourceColumnId: fromColumnId,
-              destinationColumnId: toColumnId,
-              sourceIndex: fromIndex,
-              destinationIndex: toIndex,
-            }),
-          );
-        },
-      }),
-    );
-  }, [id, index, columnId, dispatch]);
-
   return (
     <div
       ref={ref}
+      data-task-id={id}
       className={clsx(
         styles.cardWrapper,
         isSelected && styles.cardWrapper_selected,

@@ -2,7 +2,7 @@ import { useController, useFormContext } from 'react-hook-form';
 import { InputField, TextareaField } from '@ui-kit';
 import { Fragment } from 'react';
 import type { TaskFormData } from '../../../types';
-import { TITLE_MAX_LENGTH, DESCRIPTION_MAX_LENGTH } from '../taskFormSchema.ts';
+import { TITLE_MAX_LENGTH, DESCRIPTION_MAX_LENGTH } from '../../../utils';
 
 export const TaskForm = () => {
   const { control } = useFormContext<TaskFormData>();

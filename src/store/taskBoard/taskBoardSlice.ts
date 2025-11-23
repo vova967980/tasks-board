@@ -56,7 +56,6 @@ const taskBoardSlice = createSlice({
       state.columns.order = state.columns.order.filter(id => id !== columnId);
     },
 
-    /** SELECT */
     selectTask(state, action: PayloadAction<{ taskId: string; selected: boolean }>) {
       const { taskId, selected } = action.payload;
 
@@ -77,7 +76,6 @@ const taskBoardSlice = createSlice({
       }
     },
 
-    /** FILTERS */
     setSearchQuery(state, action: PayloadAction<string>) {
       state.preferences.searchQuery = action.payload;
     },
@@ -86,7 +84,6 @@ const taskBoardSlice = createSlice({
       state.preferences.filter = action.payload;
     },
 
-    /** BULK ACTIONS */
     deleteSelectedTasks(state) {
       for (const taskId of state.preferences.selectedTaskIds) {
         delete state.tasks.entities[taskId];
@@ -113,11 +110,7 @@ const taskBoardSlice = createSlice({
       state.preferences.selectedTaskIds.clear();
     },
 
-    /** DRAG & DROP */
-    moveColumn(
-      state,
-      action: PayloadAction<{ fromIndex: number; toIndex: number }>
-    ) {
+    moveColumn(state, action: PayloadAction<{ fromIndex: number; toIndex: number }>) {
       const { fromIndex, toIndex } = action.payload;
       const order = state.columns.order;
 
@@ -133,24 +126,15 @@ const taskBoardSlice = createSlice({
         destinationColumnId: number;
         sourceIndex: number;
         destinationIndex: number;
-      }>
+      }>,
     ) {
-      const {
-        taskId,
-        sourceColumnId,
-        destinationColumnId,
-        destinationIndex,
-      } = action.payload;
+      const { taskId, sourceColumnId, destinationColumnId, sourceIndex, destinationIndex } =
+        action.payload;
 
       const sourceList = state.columns.entities[sourceColumnId].taskIds;
       const destList = state.columns.entities[destinationColumnId].taskIds;
 
-      const realSourceIndex = sourceList.indexOf(taskId);
-      if (realSourceIndex === -1) {
-        return;
-      }
-
-      sourceList.splice(realSourceIndex, 1);
+      sourceList.splice(sourceIndex, 1);
 
       let insertIndex = destinationIndex;
 
@@ -158,9 +142,45 @@ const taskBoardSlice = createSlice({
       if (insertIndex > destList.length) insertIndex = destList.length;
 
       destList.splice(insertIndex, 0, taskId);
-    }
+    },
 
+    moveTaskGroup(
+      state,
+      action: PayloadAction<{
+        taskIds: string[];
+        sourceColumnId: number;
+        destinationColumnId: number;
+        sourceIndex: number;
+        destinationIndex: number;
+      }>,
+    ) {
+      const { taskIds, sourceColumnId, destinationColumnId, sourceIndex, destinationIndex } =
+        action.payload;
 
+      const sourceList = state.columns.entities[sourceColumnId].taskIds;
+      const destList = state.columns.entities[destinationColumnId].taskIds;
+
+      const sorted = sourceList.filter(id => taskIds.includes(id));
+      if (!sorted.length) return;
+
+      sorted.forEach(id => {
+        const idx = sourceList.indexOf(id);
+        if (idx !== -1) {
+          sourceList.splice(idx, 1);
+        }
+      });
+
+      const isSameColumn = sourceColumnId === destinationColumnId;
+      const isMovingDown = isSameColumn && sourceIndex < destinationIndex;
+
+      const rawDestinationIndex = isMovingDown
+        ? destinationIndex - (sorted.length - 1)
+        : destinationIndex;
+
+      const clampedDestinationIndex = Math.max(0, Math.min(rawDestinationIndex, destList.length));
+
+      destList.splice(clampedDestinationIndex, 0, ...sorted);
+    },
   },
 });
 
@@ -178,7 +198,8 @@ export const {
   markSelectedDone,
   markSelectedUndone,
   moveColumn,
-  moveTask
+  moveTask,
+  moveTaskGroup,
 } = taskBoardSlice.actions;
 
 export default taskBoardSlice.reducer;

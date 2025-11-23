@@ -17,9 +17,11 @@ export const TaskBoard = () => {
     <div className={styles.boardWrapper}>
       <ControlPanel />
       <div className={styles.columnsWrapper}>
-        {columns.order.map((columnId, index) => (
-          <Column key={`column-${columnId}`} columnId={columnId} columnIndex={index} />
-        ))}
+        <div className={styles.columns}>
+          {columns.order.map((columnId, index) => (
+            <Column key={`column-${columnId}`} columnId={columnId} columnIndex={index} />
+          ))}
+        </div>
         <Button
           className={clsx(
             styles.addColumnVerticalButton,

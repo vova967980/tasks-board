@@ -2,13 +2,11 @@ import styles from './column.module.scss';
 import { Button, CheckboxWithLabel } from '@ui-kit';
 import { AddIcon, DeleteIcon, DragIndicatorIcon } from '@assets';
 import { TaskCard } from '../taskCard';
-import { type FC, useEffect, useRef, useState } from 'react';
+import { type FC, useEffect, useState } from 'react';
 import type { TaskFormData } from '../../types';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
 import {
   addTask,
-  moveColumn,
-  moveTask,
   removeColumn,
   removeTask,
   selectMany,
@@ -21,14 +19,9 @@ import { TaskCardDraft } from '../taskCard/TaskCardDraft.tsx';
 import type { Task } from '@store/taskBoard/types.ts';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { taskFormSchema } from '../taskCard/taskFormSchema.ts';
-import {
-  draggable,
-  dropTargetForElements,
-  monitorForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
-import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { taskFormSchema } from '../../utils';
 import clsx from 'clsx';
+import { useDragDropColumn } from '../../hooks';
 
 interface ColumnProps {
   columnId: number;
@@ -37,10 +30,6 @@ interface ColumnProps {
 
 export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
   const [isDraftTask, setIsDraftTask] = useState<boolean>(false);
-  const [isDraggingTask, setIsDraggingTask] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const handleRef = useRef<HTMLButtonElement>(null);
-  const dropZoneRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const tasks = useAppSelector(tasksFilteredByColumnSelector(columnId));
   const tasksOrder = useAppSelector(state => state.taskBoard.columns.entities[columnId].taskIds);
@@ -68,90 +57,7 @@ export const Column: FC<ColumnProps> = ({ columnId, columnIndex }) => {
     }
   }, [isDraftTask, methodsDraftTask]);
 
-  useEffect(() => {
-    const element = ref.current;
-    const dragHandle = handleRef.current;
-    if (!element || !dragHandle) return;
-
-    return combine(
-      draggable({
-        element,
-        dragHandle,
-        getInitialData: () => ({
-          type: 'column',
-          columnId,
-          fromIndex: columnIndex,
-        }),
-      }),
-      dropTargetForElements({
-        element,
-        getData: () => ({
-          type: 'column',
-          columnId,
-          index: columnIndex,
-        }),
-        onDrop: ({ source, self }) => {
-          if (source.data.type !== 'column') return;
-
-          const fromIndex = source.data.fromIndex as number;
-          const toIndex = self.data.index as number;
-
-          if (fromIndex === toIndex) return;
-
-          dispatch(
-            moveColumn({
-              fromIndex,
-              toIndex,
-            }),
-          );
-        },
-      }),
-    );
-  }, [columnId, columnIndex, dispatch]);
-
-  useEffect(() => {
-    const el = dropZoneRef.current;
-    if (!el) return;
-
-    return dropTargetForElements({
-      element: el,
-      getData: () => ({
-        type: 'column-drop',
-        columnId,
-      }),
-      onDrop: ({ source, self }) => {
-        if (source.data.type !== 'task') return;
-
-        const taskId = source.data.taskId as string;
-        const fromColumnId = source.data.columnId as number;
-        const fromIndex = source.data.index as number;
-        const toColumnId = self.data.columnId as number;
-
-        dispatch(
-          moveTask({
-            taskId,
-            sourceColumnId: fromColumnId,
-            destinationColumnId: toColumnId,
-            sourceIndex: fromIndex,
-            destinationIndex: tasksOrder.length,
-          }),
-        );
-      },
-    });
-  }, [columnId, dispatch, tasksOrder.length]);
-
-  useEffect(() => {
-    return monitorForElements({
-      onDragStart: ({ source }) => {
-        if (source.data.type === 'task') {
-          setIsDraggingTask(true);
-        }
-      },
-      onDrop: () => {
-        setIsDraggingTask(false);
-      },
-    });
-  }, []);
+  const { isDraggingTask, ref, handleRef, dropZoneRef } = useDragDropColumn({columnIndex, columnId});
 
   const handleClickAddTask = () => {
     setIsDraftTask(true);

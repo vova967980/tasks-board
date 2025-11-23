@@ -8,9 +8,19 @@
 
 .columnsWrapper {
   display: flex;
-  gap: 10px;
   flex: 1;
-  overflow-y: auto;
+  gap: 10px;
+  overflow: auto;
+  min-height: 0;
+  position: relative;
+  padding-right: 20px;
+}
+
+.columns{
+  display: flex;
+  gap: 10px;
+  height: fit-content;
+  min-height: 100%;
 }
 
 .addColumnVerticalButton {
@@ -19,6 +29,8 @@
   width: max-content;
   writing-mode: vertical-rl;
   text-orientation: mixed;
+  position: sticky;
+  top: 40px;
 
   svg {
     fill: currentColor;

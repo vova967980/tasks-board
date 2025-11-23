@@ -3,14 +3,17 @@
 .columnContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  height: 100%;
-  width: 350px;
+  flex: 0 0 350px;
   min-width: 230px;
+  min-height: 0;
 }
 
 .columnHeader {
   display: flex;
+  position: sticky;
+  top: 0;
+  padding-bottom: 10px;
+  background-color: white;
   gap: 10px;
 }
 

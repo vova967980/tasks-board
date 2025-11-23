@@ -103,3 +103,8 @@ svg.doneIcon {
 svg.pendingIcon {
   fill: $gray-500;
 }
+
+.groupDragging, .cardDragging {
+  outline: 2px dashed #4a9eff;
+  outline-offset: 2px;
+}

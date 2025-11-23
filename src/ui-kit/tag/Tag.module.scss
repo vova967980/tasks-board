@@ -8,6 +8,7 @@
   color: $gray-600;
   border: 1px solid $gray-300;
   line-height: 16px;
+  user-select: none;
 
   &:hover {
     background-color: $gray-300;
