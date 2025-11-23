@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
-import {
-  draggable,
-  dropTargetForElements,
-} from '@atlaskit/pragmatic-drag-and-drop/dist/types/entry-point/element/adapter';
 import styles from '../components/taskCard/TaskCard.module.scss';
 import { moveTask, moveTaskGroup } from '@store/taskBoard';
 import { useAppDispatch, useAppSelector } from '@store/hooks.ts';
+import {
+  draggable,
+  dropTargetForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 
 interface UseDragDropTaskProps {
   columnId: number;
