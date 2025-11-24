@@ -41,3 +41,13 @@
     writing-mode: horizontal-tb;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .boardWrapper{
+    padding: 10px;
+  }
+
+  .columnsWrapper{
+    max-height: 768px;
+  }
+}

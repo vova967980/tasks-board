@@ -16,8 +16,10 @@
   pointer-events: none;
 }
 
-.input:hover + .icon {
-  color: $color-primary;
+@media (hover:hover){
+  .input:hover + .icon {
+    color: $color-primary;
+  }
 }
 
 .input:disabled + .icon {

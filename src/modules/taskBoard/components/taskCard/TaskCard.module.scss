@@ -108,3 +108,14 @@ svg.pendingIcon {
   outline: 2px dashed #4a9eff;
   outline-offset: 2px;
 }
+
+@media screen and (max-width: 768px) {
+  .actionButtonsGroup {
+    gap: 10px;
+
+
+    button {
+      display: flex;
+    }
+  }
+}

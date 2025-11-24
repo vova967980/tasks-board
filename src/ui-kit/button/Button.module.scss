@@ -14,8 +14,10 @@
     fill: currentColor;
   }
 
-  &:hover {
-    cursor: pointer;
+  @media (hover:hover) {
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   &:disabled {
@@ -29,9 +31,11 @@
   color: $gray-500;
   border: 1px solid transparent;
 
-  &:hover {
-    background-color: $gray-200;
-    color: $gray-700;
+  @media (hover:hover){
+    &:hover {
+      background-color: $gray-200;
+      color: $gray-700;
+    }
   }
 }
 
@@ -40,25 +44,31 @@
   color: $gray-600;
   border: 1px solid $gray-300;
 
-  &:hover {
-    background-color: $gray-300;
-    color: $gray-700;
+  @media (hover:hover){
+    &:hover {
+      background-color: $gray-300;
+      color: $gray-700;
+    }
   }
 }
 
 .variant_iconDanger {
   color: $color-danger;
 
-  &:hover {
-    color: $color-danger-hover;
+  @media (hover:hover){
+    &:hover {
+      color: $color-danger-hover;
+    }
   }
 }
 
 .variant_icon {
   color: $gray-500;
 
-  &:hover {
-    color: $gray-700;
+  @media (hover:hover){
+    &:hover {
+      color: $gray-700;
+    }
   }
 }
 

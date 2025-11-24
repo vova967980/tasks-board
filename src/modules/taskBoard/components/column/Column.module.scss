@@ -49,8 +49,22 @@ button.moveColumnButton {
   display: flex;
   flex: 1;
 
-  &_dragging{
+  &_dragging {
     border: 1px dashed $color-primary;
     background: $color-primary-light;
   }
+}
+
+@media screen and (max-width: 768px) {
+  .columnContainer {
+    flex: 0 0 230px;
+  }
+  .columnHeader {
+    position: static;
+  }
+  .columnBody{
+    gap: 10px;
+    padding: 7px;
+  }
+
 }
