@@ -1,0 +1,18 @@
+# не трогать SVG
+**/*.svg
+
+# node_modules — по умолчанию не форматируется, но укажем явно
+node_modules
+
+# сборки и артефакты
+dist
+build
+
+# lock-файлы
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# env-файлы
+*.env
+*.env.local
