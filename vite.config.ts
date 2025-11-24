@@ -7,6 +7,7 @@ import path from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [svgr(), dts(), react()],
+  base: '/tasks-board/',
   resolve: {
     alias: {
       '@styles': path.resolve(__dirname, './src/styles'),
